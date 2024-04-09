@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import express, { Request, Response } from "express";
+import { jwtCheck } from "./middlewares/auth";
 const app = express();
+app.use(jwtCheck);
 
 app.get("/protected", (req, res) => {
   res.json("hello from backend");
