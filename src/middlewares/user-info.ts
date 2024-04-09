@@ -1,26 +1,16 @@
-import axios from "axios";
 import { RequestHandler } from "express";
 import userService from "../services.ts/user.service";
+import { jwtDecode } from "jwt-decode";
 
-export const getUserInfo: RequestHandler = async (req, res, next) => {
+export const getUserInfo: RequestHandler = async (req: any, res, next) => {
   try {
     const token = req?.headers?.authorization?.split(" ")[1];
-    const userInfo = await requestUserInfo(token as string);
-    const { nickname, email } = userInfo.data;
+    const decoded: any = jwtDecode(token);
+    const { nickname, email } = decoded;
     const localUserInfo = await userService.findFirstOrCreate(nickname, email);
     res.locals.userInfo = localUserInfo;
     next();
   } catch (error) {
     res.json(error);
   }
-};
-
-const requestUserInfo = async (token: string) => {
-  const user = await axios.get("https://dev-l1hhkali.us.auth0.com/userinfo", {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  });
-
-  return user;
 };
