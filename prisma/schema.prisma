@@ -8,4 +8,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Status {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+}
 
+model User {
+  id Int @id @default(autoincrement())
+  rowguid String @default(uuid())
+  name String?
+  email String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
+  todos Todos[]
+}
+
+model Todos {
+  id Int @id @default(autoincrement())
+  rowguid String @unique @default(uuid())
+  title String
+  description String?
+  status Status
+  deadLine DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  owner User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+}
